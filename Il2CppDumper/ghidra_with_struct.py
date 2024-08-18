@@ -120,9 +120,9 @@ if "ScriptMetadata" in data and "ScriptMetadata" in processFields:
 		name = scriptMetadata["Name"].encode("utf-8")
 		set_name(addr, name)
 		setEOLComment(addr, name)
-		monitor.incrementProgress(1)
 		if scriptMetadata["Signature"]:
 			set_type(addr, scriptMetadata["Signature"].encode("utf-8"))
+		monitor.incrementProgress(1)
 
 if "ScriptMetadataMethod" in data and "ScriptMetadataMethod" in processFields:
 	scriptMetadataMethods = data["ScriptMetadataMethod"]
@@ -147,10 +147,13 @@ if "Addresses" in data and "Addresses" in processFields:
 
 if "ScriptMethod" in data and "ScriptMethod" in processFields:
 	scriptMethods = data["ScriptMethod"]
+	monitor.initialize(len(scriptMethods))
+	monitor.setMessage("Methods")
 	for scriptMethod in scriptMethods:
 		addr = get_addr(scriptMethod["Address"])
 		sig = scriptMethod["Signature"][:-1].encode("utf-8")
 		name = scriptMethod["Name"].encode("utf-8")
 		set_sig(addr, name, sig)
+		monitor.incrementProgress(1)
 
 print 'Script finished!'
