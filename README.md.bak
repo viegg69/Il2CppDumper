@@ -18,7 +18,7 @@ Unity il2cpp reverse engineer
 
 ## Usage
 
-Run `Il2CppDumper` and choose the il2cpp executable file and `global-metadata.dat` file, then enter the information as prompted
+Run `Il2CppDumper.exe` and choose the il2cpp executable file and `global-metadata.dat` file, then enter the information as prompted
 
 The program will then generate all the output files in current working directory
 
