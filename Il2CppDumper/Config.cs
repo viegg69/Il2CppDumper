@@ -1,4 +1,4 @@
-﻿namespace Il2CppDumper
+namespace Il2CppDumper
 {
     public class Config
     {
@@ -17,5 +17,8 @@
         public double ForceVersion { get; set; } = 24.3;
         public bool ForceDump { get; set; } = false;
         public bool NoRedirectedPointer { get; set; } = false;
+        public string Il2cppStart { get; set; } = "0";
+        public string CodeRegistration { get; set; } = "0";
+        public string MetadataRegistration { get; set; } = "0";
     }
 }
