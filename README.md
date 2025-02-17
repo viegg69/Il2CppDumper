@@ -25,7 +25,7 @@ The program will then generate all the output files in current working directory
 ### Command-line
 
 ```
-Il2CppDumper.exe <executable-file> <global-metadata> <output-directory>
+Il2CppDumper <executable-file> <global-metadata> <output-directory>
 ```
 ### Termux build
 
@@ -34,8 +34,8 @@ pkg upgrade
 pkg i git dotnet8.0
 git clone https://github.com/viegg69/Il2CppDumper.git
 cd Il2CppDumper
+chmod +x build.sh
 ./build.sh
-Il2CppDumper <executable-file> <global-metadata> <output-directory>
 ```
 
 ### Outputs
