@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -13,10 +13,11 @@ namespace Il2CppDumper
         [STAThread]
         static void Main(string[] args)
         {
-            config = JsonSerializer.Deserialize<Config>(File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"config.json"));
             string il2cppPath = null;
             string metadataPath = null;
             string outputDir = null;
+            string configPath = null;//AppDomain.CurrentDomain.BaseDirectory + @"config.json";
+            
 
             if (args.Length == 1)
             {
@@ -53,7 +54,7 @@ namespace Il2CppDumper
                     }
                 }
             }
-            outputDir ??= AppDomain.CurrentDomain.BaseDirectory;
+            
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 if (il2cppPath == null)
@@ -94,6 +95,12 @@ namespace Il2CppDumper
             {
                 try
                 {
+                    FileInfo fileInfo = new FileInfo(il2cppPath);
+
+                    outputDir ??= fileInfo.DirectoryName + Path.DirectorySeparatorChar;
+                    configPath = outputDir + @"config.json";
+                    config = JsonSerializer.Deserialize<Config>(File.ReadAllText(configPath));
+                    
                     if (Init(il2cppPath, metadataPath, out var metadata, out var il2Cpp))
                     {
                         Dump(metadata, il2Cpp, outputDir);
@@ -186,8 +193,10 @@ namespace Il2CppDumper
                 if (il2Cpp is ElfBase elf)
                 {
                     Console.WriteLine("Detected this may be a dump file.");
-                    Console.WriteLine("Input il2cpp dump address or input 0 to force continue:");
-                    var DumpAddr = Convert.ToUInt64(Console.ReadLine(), 16);
+                    //Console.WriteLine("Input il2cpp dump address or input 0 to force continue:");
+                    //var DumpAddr = Convert.ToUInt64(Console.ReadLine(), 16);
+                    Console.WriteLine($"Il2Cpp Start Address: {config.Il2cppStart}");
+                    var DumpAddr = Convert.ToUInt64(config.Il2cppStart, 16);
                     if (DumpAddr != 0)
                     {
                         il2Cpp.ImageBase = DumpAddr;
@@ -229,10 +238,12 @@ namespace Il2CppDumper
                 if (!flag)
                 {
                     Console.WriteLine("ERROR: Can't use auto mode to process file, try manual mode.");
-                    Console.Write("Input CodeRegistration: ");
-                    var codeRegistration = Convert.ToUInt64(Console.ReadLine(), 16);
-                    Console.Write("Input MetadataRegistration: ");
-                    var metadataRegistration = Convert.ToUInt64(Console.ReadLine(), 16);
+                    //Console.Write("Input CodeRegistration: ");
+                    //var codeRegistration = Convert.ToUInt64(Console.ReadLine(), 16);
+                    var codeRegistration = Convert.ToUInt64(config.CodeRegistration, 16);
+                    //Console.Write("Input MetadataRegistration: ");
+                    //var metadataRegistration = Convert.ToUInt64(Console.ReadLine(), 16);
+                    var metadataRegistration = Convert.ToUInt64(config.MetadataRegistration, 16);
                     il2Cpp.Init(codeRegistration, metadataRegistration);
                 }
                 if (il2Cpp.Version >= 27 && il2Cpp.IsDumped)
@@ -271,6 +282,7 @@ namespace Il2CppDumper
                 DummyAssemblyExporter.Export(executor, outputDir, config.DummyDllAddToken);
                 Console.WriteLine("Done!");
             }
+            Console.WriteLine($"Output: {outputDir}");
         }
     }
 }
